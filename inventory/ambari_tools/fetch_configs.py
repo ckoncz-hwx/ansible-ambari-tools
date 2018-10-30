@@ -47,6 +47,9 @@ def get_cluster_config(ambari_url, user, password, cluster_name, config_type, co
             connection_timeout)
     assert_return_code(r, 200, 'cluster configurations')
     config = json.loads(r.content)
+    # skip config items without required property
+    if 'properties' not in config['items'][0]:
+        return ""
     return parse_config(r,
                         config,
                         lambda config: config['items'][0]['properties'] is not None,
@@ -73,6 +76,9 @@ def get_all_configs(protocol, host, port, context_path, username, password, clus
         ambari_cluster_config_facts = {}
         for config_type in config_types:
             config = get_cluster_config(ambari_url, username, password, cluster_name, config_type, config_types[config_type]['tag'], connection_timeout)
+            # skip config items without required property
+            if not config:
+                continue
             safe_confs = escape_values(config['properties'])
             ambari_cluster_config_facts[config_type] = safe_confs
 

@@ -1,6 +1,6 @@
 #This is created by Ambari DeployNG code
-Listen 6182
-<VirtualHost *:11443>
+Listen {{ oozie_port }}
+<VirtualHost *:{{ oozie_port }}>
 SSLEngine On
         SSLProxyEngine On
         SSLCertificateFile {{ oozie_ca_cert_dir }}/{{ oozie_ssl_cert }}
@@ -30,5 +30,6 @@ SSLEngine On
                 Allow from all
         </Location>
        ProxyPass /balancer-manager !
-       ProxyPass / balancer://ooziebalancer/
+       ProxyPass / balancer://ooziesslcluster/
+       ProxyPassReverse / balancer://ooziesslcluster/
 </VirtualHost>
